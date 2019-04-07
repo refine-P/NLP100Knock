@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+{% block content %}
+  <!-- Form
+  ================================================== -->
+<div class="form">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h3>アーティスト情報検索</h3>
+        </div>
+        <form action="/post" method="post" class="form-horizontal">
+          <div class="form-group">
+            <label for="name" class="control-label col-md-2">アーティスト名(or別名):</label>
+            <div class="col-md-3">
+          		<input type="text" class="form-control" id="name" name="name" placeholder="Artist" />
+          	</div>
+          </div>
+          <div class="form-group">
+        	<label for="area" class="control-label col-md-2">活動場所:</label>
+        	<div class="col-md-3">
+        		<input type="text" class="form-control" id="area" name="area" placeholder="Area" />
+        	</div>
+          </div>
+		  <div class="form-group">
+          	<label for="tag" class="control-label col-md-2">タグ:</label>
+          	<div class="col-md-3">
+          		<input type="text" class="form-control" id="tag" name="tag" placeholder="Tag" />
+          	</div>
+          	<!-- http://qiita.com/mimoe/items/89b317be5e38bfbc44ee -->
+          	<div class="col-md-1">
+          	<button type="button" class="btn btn-default" onclick="submit();">検索</button>
+          	</div>
+          </div>          
+        </form>
+        <div class="page-header">
+        	<h4>
+        	  検索結果(全{{ total_count }}件)
+        	  <small>
+        	    {% if total_count > 10 %}
+        	      結果が多すぎるのでレーティングの投票数上位10件のみ表示します
+        	    {% endif %}
+        	  </small>
+        	</h4>
+        </div>
+        <div class="row">
+          <div class="col-md-5">
+		    <div class="panel panel-info">
+  		      <div class="panel-heading">
+    		    <h5 class="panel-title">検索条件</h5>
+  		      </div>
+  		      <div class="panel-body">
+                <table class="table table-striped">
+                  <tr>
+        		    <td>アーティスト名(or別名)</td>
+        		    <td>
+            		  {% if name %}
+            		    {{ name }} 
+            		  {% endif %}       		    
+        		    </td>
+        		  </tr>
+        		  <tr>
+        		    <td>活動場所</td>
+        		    <td>
+            		  {% if area %}
+            		    {{ area }} 
+            		  {% endif %} 
+        		    </td>
+        		  </tr>
+        		  <tr>
+        		    <td>タグ</td>
+        		    <td>
+            		  {% if tag %}
+            		    {{ tag }} 
+            		  {% endif %}         		    
+        		    </td>
+        		  </tr>
+    		    </table>    		
+  		      </div>
+		    </div>
+		  </div>
+		</div>
+		{% for result in result_list %}
+		  <div class="row">
+		    <div class="page-header">
+		      <h5>{{ loop.index }}件目</h5>
+		    </div>
+		    <table class="table table-striped col-md-12">
+		      <tr>
+		        <td class="col-md-2">アーティスト名</td>
+		        <td class="col-md-10">
+		          {% if result.name %}
+		            {{ result.name }}
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <tr>
+		        <td class="col-md-2">アーティストの別名</td>
+		        <td class="col-md-10">
+		          {% if result.aliases %}
+		            {%- for r_alias in result.aliases %}
+		              {{ r_alias.name }}
+		              {%- if loop.index != loop.length -%}
+		                ,
+		              {% endif -%}
+		            {%- endfor %}
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <tr>
+		        <td class="col-md-2">活動場所</td>
+		        <td class="col-md-10">
+		          {% if result.area %}
+		            {{ result.area }}
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <tr>
+		        <td class="col-md-2">活動開始</td>
+		        <td class="col-md-10">
+		          {% if result.begin %}
+		            {% if result.begin.year %}
+		              {{ result.begin.year }}年
+		            {% endif %}
+		            {% if result.begin.month %}
+		              {{ result.begin.month }}月
+		            {% endif %}
+		            {% if result.begin.date %}
+		              {{ result.begin.date }}日
+		            {% endif %}		          
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <td class="col-md-2">活動終了</td>
+		        <td class="col-md-10">
+		          {% if result.end %}
+		            {% if result.end.year %}
+		              {{ result.end.year }}年
+		            {% endif %}
+		            {% if result.end.month %}
+		              {{ result.end.month }}月
+		            {% endif %}
+		            {% if result.end.date %}
+		              {{ result.end.date }}日
+		            {% endif %}		          
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <tr>
+		        <td class="col-md-2">タグ</td>
+		        <td class="col-md-10">
+		          {% if result.tags %}
+		            {%- for r_tag in result.tags -%}
+		              {{ r_tag.value }}
+		              {%- if loop.index != loop.length -%}
+		                ,
+		              {% endif -%}
+		            {%- endfor -%}
+		          {% endif %}
+		        </td>
+		      </tr>
+		      <tr>
+		        <td class="col-md-2">レーティング</td>
+		        <td class="col-md-10">
+		          {% if result.rating %}
+			        {{ result.rating.value }}
+		          {% endif %}
+		        </td>
+		      </tr>	
+		      <tr>
+		        <td class="col-md-2">レーティングの投票数</td>
+		        <td class="col-md-10">
+		          {% if result.rating %}
+			        {{ result.rating.count }}
+		          {% endif %}
+		        </td>
+		      </tr>
+		    </table>	  
+          </div>
+		{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

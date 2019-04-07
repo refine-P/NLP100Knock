@@ -1,0 +1,14 @@
+・注意点
+1. pydotを使うと日本語の表示をするのが難しいので、以下のものを使う方がいい
+
+graphviz(おすすめ)
+https://github.com/xflr6/graphviz
+pip install graphvizでインストールできるので比較的簡単
+
+
+※ただし、デフォルトのフォントだと日本語が表示できないので、
+　こちらで、フォントを指定する必要がある
+
+2. CabochaのPythonバインディングはWindowsだとインストールできなさそう
+
+なので，問題44はPythonバインディングを使用しないコードも用意しました(subprocessでcabochaを呼び出す)
